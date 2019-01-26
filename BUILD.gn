@@ -1,0 +1,14 @@
+#action("build_cryptopp"){
+# script = "make"
+# outputs = ["$target_gen_dir/build_cryptopp.out"]
+# args = ["-C", "../cryptopp/src/"] 
+#}
+executable("crypto") {
+  sources = [                 
+    "cpp/prime4standalone/prime_sieve.c", "cpp/crypto/main.cpp",
+    "cpp/cryptolib/aes.cpp", 
+    "cpp/cryptolib/ecc.cpp"
+  ]
+  include_dirs = ["cpp/prime4standalone"]
+  #deps = [":build_cryptopp"]
+}
