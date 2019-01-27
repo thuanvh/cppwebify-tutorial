@@ -73,7 +73,7 @@ bool VerifyMessage( const ECDSA<ECP, SHA1>::PublicKey& key, const string& messag
 // In 2010, use SHA-256 and P-256 curve
 //////////////////////////////////////////
 
-int main(int argc, char* argv[])
+int main_ecc(int argc, char* argv[])
 {
     // Scratch result
     bool result = false;   
