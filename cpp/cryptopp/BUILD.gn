@@ -206,9 +206,9 @@ static_library("cryptopp"){
 #     AVX2_FLAG = -mavx2
 #     SHANI_FLAG = -msha
   cflags_cc = ["-msse2", "-msse3", "-mssse3", "-msse4.1", "-msse4.2", "-msse4.2", 
-  "-mpclmul", "-mavx", "-mavx2", "-msha"]
+  "-mpclmul", "-maes", "-mavx", "-mavx2", "-msha"]
   cflags = ["-msse2", "-msse3", "-mssse3", "-msse4.1", "-msse4.2", "-msse4.2", 
-  "-mpclmul", "-mavx", "-mavx2", "-msha"]
+  "-mpclmul", "-maes", "-mavx", "-mavx2", "-msha"]
   cflags_c = ["-msse2", "-msse3", "-mssse3", "-msse4.1", "-msse4.2", "-msse4.2", 
-  "-mpclmul", "-mavx", "-mavx2", "-msha"]
+  "-mpclmul", "-maes", "-mavx", "-mavx2", "-msha"]
 }
