@@ -100,29 +100,32 @@ int main_ecc(int argc, char* argv[])
     
     /////////////////////////////////////////////
     // Save key in PKCS#9 and X.509 format    
-    //SavePrivateKey( "ec.private.key", privateKey );
-    //SavePublicKey( "ec.public.key", publicKey );
+    SavePrivateKey( "ec.private.key", privateKey );
+    SavePublicKey( "ec.public.key", publicKey );
     
     /////////////////////////////////////////////
     // Load key in PKCS#9 and X.509 format     
-    //LoadPrivateKey( "ec.private.key", privateKey );
-    //LoadPublicKey( "ec.public.key", publicKey );
+    LoadPrivateKey( "ec.private.key", privateKey );
+    LoadPublicKey( "ec.public.key", publicKey );
 
     /////////////////////////////////////////////
     // Print Domain Parameters and Keys    
-    // PrintDomainParameters( publicKey );
-    // PrintPrivateKey( privateKey );
-    // PrintPublicKey( publicKey );
+    PrintDomainParameters( publicKey );
+    PrintPrivateKey( privateKey );
+    PrintPublicKey( publicKey );
         
     /////////////////////////////////////////////
     // Sign and Verify a message      
     string message = "Yoda said, Do or do not. There is no try.";
     string signature;
-
+    std::cout << "Message: " << message << std::endl;
     result = SignMessage( privateKey, message, signature );
+    std::cout << "Message: " << signature << std::endl;
     assert( true == result );
 
+    std::cout << "Message: " << message << std::endl;
     result = VerifyMessage( publicKey, message, signature );
+    std::cout << "Message: " << signature << std::endl;
     assert( true == result );
 
     return 0;

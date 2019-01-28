@@ -7,11 +7,11 @@
 #}
 executable("crypto") {
   sources = [                 
-    "cpp/prime4standalone/prime_sieve.c", "cpp/crypto/main.cpp",
+    "cpp/crypto/main.cpp",
     "cpp/cryptolib/aes.cpp", 
     "cpp/cryptolib/ecc.cpp"
   ]
-  include_dirs = ["cpp/prime4standalone", "cpp/cryptopp/src"]
+  include_dirs = ["cpp/cryptolib", "cpp/cryptopp/src"]
   deps = ["//cpp/cryptopp:cryptopp"]
   #deps = [":build_cryptopp"]
 }
