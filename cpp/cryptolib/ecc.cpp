@@ -2,6 +2,7 @@
 //
 
 //#include "stdafx.h"
+#include "ecc.h"
 
 #include <assert.h>
 
@@ -251,4 +252,24 @@ bool VerifyMessage( const ECDSA<ECP, SHA1>::PublicKey& key, const string& messag
     );
 
     return result;
+}
+
+
+void ECCCrypto::genKey(const std::string& privateKeyFile, const std::string& publicKeyFile){
+
+}
+void ECCCrypto::loadKey(const std::string& privateKeyFile, const std::string& publicKeyFile){
+
+}
+std::string ECCCrypto::encryptText(const std::string& message){
+  return "";
+}
+std::string ECCCrypto::decryptText(const std::string& message){
+  return "";
+}
+void ECCCrypto::encryptFile(const std::string& inputFile, const std::string& outputFile){
+
+}
+void ECCCrypto::decryptFile(const std::string& inputFile, const std::string& outputFile){
+
 }
