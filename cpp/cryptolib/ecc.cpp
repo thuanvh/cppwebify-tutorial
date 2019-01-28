@@ -255,11 +255,36 @@ bool VerifyMessage( const ECDSA<ECP, SHA1>::PublicKey& key, const string& messag
 }
 
 
-void ECCCrypto::genKey(const std::string& privateKeyFile, const std::string& publicKeyFile){
+bool ECCCrypto::genKey(const std::string& privateKeyFile, const std::string& publicKeyFile){
+    // Private and Public keys
+    
+    
+    /////////////////////////////////////////////
+    // Generate Keys
+    bool result = GeneratePrivateKey( CryptoPP::ASN1::secp160r1(), _privateKey );
+    assert( true == result );
+    if( !result ) { return false; }
 
+    result = GeneratePublicKey( _privateKey, _publicKey );
+    assert( true == result );
+    if( !result ) { return false; }
+    
+    // /////////////////////////////////////////////
+    // // Print Domain Parameters and Keys   
+    // PrintDomainParameters( publicKey );
+    // PrintPrivateKey( privateKey );
+    // PrintPublicKey( publicKey );
+    
+    /////////////////////////////////////////////
+    // Save key in PKCS#9 and X.509 format    
+    SavePrivateKey( privateKeyFile, _privateKey );
+    SavePublicKey( publicKeyFile, _publicKey );
+    return true;
 }
-void ECCCrypto::loadKey(const std::string& privateKeyFile, const std::string& publicKeyFile){
-
+bool ECCCrypto::loadKey(const std::string& privateKeyFile, const std::string& publicKeyFile){
+    LoadPrivateKey( privateKeyFile, _privateKey );
+    LoadPublicKey( publicKeyFile, _publicKey );
+  return true;
 }
 std::string ECCCrypto::encryptText(const std::string& message){
   return "";

@@ -1,11 +1,11 @@
 #include "aes.h"
 
 
-void AESCrypto::genKey(const std::string& privateKeyFile, const std::string& publicKeyFile){
-
+bool AESCrypto::genKey(const std::string& privateKeyFile, const std::string& publicKeyFile){
+  return false;
 }
-void AESCrypto::loadKey(const std::string& privateKeyFile, const std::string& publicKeyFile){
-
+bool AESCrypto::loadKey(const std::string& privateKeyFile, const std::string& publicKeyFile){
+  return false;
 }
 std::string AESCrypto::encryptText(const std::string& message){
   return "";
