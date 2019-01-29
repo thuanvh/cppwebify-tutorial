@@ -3,7 +3,7 @@
 #include <string>
 #include "cryptolib.h"
 
-class AESCrypto : CryptoClass{
+class AESCrypto : public CryptoClass{
 public:
   virtual bool genKey(const std::string& privateKeyFile, const std::string& publicKeyFile);
   virtual bool loadKey(const std::string& privateKeyFile, const std::string& publicKeyFile);

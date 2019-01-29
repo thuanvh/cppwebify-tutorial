@@ -16,8 +16,10 @@ public:
 class CryptoLib
 {
 public:
+  CryptoLib(const std::string& cryptoType);
   CryptoLib(CryptoType cryptoType);
   CryptoLib(CryptoType cryptoType,const std::string& privateKeyFile, const std::string& publicKeyFile);
+  ~CryptoLib();
   bool genKey(const std::string& privateKeyFile, const std::string& publicKeyFile);
   bool loadKey(const std::string& privateKeyFile, const std::string& publicKeyFile);
   std::string encryptText(const std::string& message);

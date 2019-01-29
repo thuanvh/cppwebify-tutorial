@@ -7,7 +7,7 @@ using CryptoPP::ECDSA;
 using CryptoPP::ECP;
 using CryptoPP::SHA1;
 
-class ECCCrypto : CryptoClass{
+class ECCCrypto : public CryptoClass{
 public:
   virtual bool genKey(const std::string& privateKeyFile, const std::string& publicKeyFile);
   virtual bool loadKey(const std::string& privateKeyFile, const std::string& publicKeyFile);
