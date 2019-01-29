@@ -8,6 +8,8 @@ using CryptoPP::ECDSA;
 using CryptoPP::ECP;
 using CryptoPP::SHA1;
 
+//#include "modes.h"
+
 #define ECC_ALGORITHM CryptoPP::ECP
 // #define ECC_ALGORITHM CryptoPP::EC2N
 
@@ -63,10 +65,17 @@ public:
   virtual bool genKey(const std::string& privateKeyFile, const std::string& publicKeyFile);
   virtual bool loadKey(const std::string& privateKeyFile, const std::string& publicKeyFile);
   virtual bool encrypt(const byte* message, int length, byte*& newmessage, int& newlength);
-  virtual bool decrypt(const byte* message, int length, byte*& newmessage, int& newlength);  
+  virtual bool decrypt(const byte* message, int length, byte*& newmessage, int& newlength);
+  
 private:
-  CryptoPP::ECIES < ECC_ALGORITHM >::PrivateKey _privateKey;    
-  CryptoPP::ECIES < ECC_ALGORITHM >::PublicKey _publicKey;
+  void UpdateEncryptor();
+  void UpdateDecryptor();
+  CryptoPP::ECIES<ECC_ALGORITHM >::PrivateKey _privateKey;    
+  CryptoPP::ECIES<ECC_ALGORITHM >::PublicKey _publicKey;
+  CryptoPP::ECIES<ECC_ALGORITHM>::Decryptor _Decryptor;
+  CryptoPP::ECIES<ECC_ALGORITHM>::Encryptor _Encryptor;
+  //CryptoPP::StreamTransformation* _EncryptorTransform;
+  //CryptoPP::StreamTransformation* _DecryptorTransform;
   CryptoPP::AutoSeededRandomPool _rng;
 };
 

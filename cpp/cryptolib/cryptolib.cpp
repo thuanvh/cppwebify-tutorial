@@ -2,6 +2,17 @@
 #include "aes.h"
 #include "ecc.h"
 
+#include "files.h"
+using CryptoPP::FileSource;
+using CryptoPP::FileSink;
+
+#include "filters.h"
+using CryptoPP::StreamTransformationFilter;
+using CryptoPP::MeterFilter;
+using CryptoPP::Redirector;
+
+#include "modes.h"
+
 #include "base64.h"
 std::string EncodeBase64(byte* message, int length){
   std::string encoded;
@@ -86,11 +97,82 @@ std::string CryptoLib::decryptText(const std::string& message){
   delete[] inputData;
   return newText;
 }
+inline bool EndOfFile(const FileSource& file)
+{
+  std::istream* stream = const_cast<FileSource&>(file).GetStream();
+  return stream->eof();
+}
+
 void CryptoLib::encryptFile(const std::string& inputFile, const std::string& outputFile){
-  //return _crypto->encryptFile(inputFile, outputFile);
+  //transformFile(inputFile, outputFile, _crypto->CreateEncryptTransformation());
+  //std::cout << "Create file source" << std::endl;
+  FileSource ifs(inputFile.c_str(), false);
+  FileSink ofs(outputFile.c_str());
+  std::vector<byte> buffer;
+  
+  
+    
+  //std::cout << "Attach filter" << std::endl;
+  ifs.Attach(new CryptoPP::VectorSink(buffer));
+  // filter.Attach(new Redirector(meter));
+  // meter.Attach(new Redirector(ofs));
+
+  const int BLOCK_SIZE = 4096;
+  long processed = 0;
+
+  //std::cout << "Begin each block" << std::endl;
+  while(!EndOfFile(ifs) && !ifs.SourceExhausted())
+  {
+    ifs.Pump(BLOCK_SIZE);
+    //filter.Flush(false);
+    byte* newMessage; int newLength;
+    _crypto->encrypt((byte*)buffer.data(), buffer.size(), newMessage, newLength);
+
+    ofs.Put(newMessage, newLength);
+    processed += BLOCK_SIZE;
+    delete []newMessage;
+    //if (processed % (1024*1024*10) == 0)
+    //  std::cout << "Processed: " << meter.GetTotalBytes() << std::endl;
+  }
+
+  // Signal there is no more data to process.
+  // The dtor's will do this automatically.
+  ofs.MessageEnd();
 }
 void CryptoLib::decryptFile(const std::string& inputFile, const std::string& outputFile){
-  //return _crypto->decryptFile(inputFile, outputFile);
+  //transformFile(inputFile, outputFile, _crypto->CreateDecryptTransformation());
+  //transformFile(inputFile, outputFile, _crypto->CreateEncryptTransformation());
+  //std::cout << "Create file source" << std::endl;
+  FileSource ifs(inputFile.c_str(), false);
+  FileSink ofs(outputFile.c_str());
+  std::vector<byte> buffer;
+      
+  //std::cout << "Attach filter" << std::endl;
+  ifs.Attach(new CryptoPP::VectorSink(buffer));
+  // filter.Attach(new Redirector(meter));
+  // meter.Attach(new Redirector(ofs));
+
+  const int BLOCK_SIZE = 4096;
+  long processed = 0;
+
+  //std::cout << "Begin each block" << std::endl;
+  while(!EndOfFile(ifs) && !ifs.SourceExhausted())
+  {
+    ifs.Pump(BLOCK_SIZE);
+    //filter.Flush(false);
+    byte* newMessage; int newLength;
+    _crypto->decrypt((byte*)buffer.data(), buffer.size(), newMessage, newLength);
+
+    ofs.Put(newMessage, newLength);
+    processed += BLOCK_SIZE;
+    delete []newMessage;
+    //if (processed % (1024*1024*10) == 0)
+    //  std::cout << "Processed: " << meter.GetTotalBytes() << std::endl;
+  }
+
+  // Signal there is no more data to process.
+  // The dtor's will do this automatically.
+  ofs.MessageEnd();
 }
 
 CryptoLib::~CryptoLib(){

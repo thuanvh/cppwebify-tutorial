@@ -152,17 +152,26 @@ bool ECCCrypto::genKey(const std::string& privateKeyFile, const std::string& pub
     }
     // Private and Public keys
     _privateKey.Save( FileSink( privateKeyFile.c_str(), true /*binary*/ ).Ref() );
-    _publicKey.Save( FileSink( publicKeyFile.c_str(), true /*binary*/ ).Ref() );    
+    _publicKey.Save( FileSink( publicKeyFile.c_str(), true /*binary*/ ).Ref() );
+    UpdateEncryptor();
+    UpdateDecryptor();
     return true;
 }
 bool ECCCrypto::loadKey(const std::string &privateKeyFile, const std::string &publicKeyFile)
 {
-    if(privateKeyFile != "")
-      _privateKey.Load( FileSource( privateKeyFile.c_str(), true /*pump all*/ ).Ref() );
-    if(publicKeyFile != "")
-      _publicKey.Load( FileSource( publicKeyFile.c_str(), true /*pump all*/ ).Ref() );
-  //LoadPrivateKey(privateKeyFile, _privateKey);
-  //LoadPublicKey(publicKeyFile, _publicKey);
+  
+  if(privateKeyFile != ""){
+    //std::cout << "load private key " << std::endl;
+    _privateKey.Load( FileSource( privateKeyFile.c_str(), true /*pump all*/ ).Ref() );
+  }
+  if(publicKeyFile != ""){
+    //std::cout << "load public key " << std::endl;
+    _publicKey.Load( FileSource( publicKeyFile.c_str(), true /*pump all*/ ).Ref() );
+  }
+  if(publicKeyFile != "")
+    UpdateEncryptor();
+  if(privateKeyFile != "")  
+    UpdateDecryptor();
   return true;
 }
 // std::string ECCCrypto::encryptText(const std::string& message){  
@@ -236,18 +245,10 @@ bool ECCCrypto::loadKey(const std::string &privateKeyFile, const std::string &pu
 //     }
 // }
 
-bool ECCCrypto::encrypt(const byte* message, int length, byte*& newmessage, int& newlength){
-// Encryptor and Decryptor
-  CryptoPP::ECIES < ECC_ALGORITHM >::Encryptor Encryptor (_publicKey);    
-  // Message
-  //string plainText = "Yoda said, Do or do not. There is no try.";
+bool ECCCrypto::encrypt(const byte* message, int length, byte*& newmessage, int& newlength)
+{
   int plainTextLength = length;// + 1;
-
-  //cout << "Plain text: " << plainText << endl;
-  //cout << "Plain text length is " << plainTextLength << " (including the trailing NULL)" << endl;
-
-  // Size  
-  size_t cipherTextLength = Encryptor.CiphertextLength (plainTextLength);
+  size_t cipherTextLength = _Encryptor.CiphertextLength (plainTextLength);
     
   if (0 == cipherTextLength)
   {        
@@ -268,17 +269,17 @@ bool ECCCrypto::encrypt(const byte* message, int length, byte*& newmessage, int&
 
   // Encryption
   //Encryptor.Encrypt(_rng, reinterpret_cast < const byte * > (message.data ()), plainTextLength, cipherText); 
-  Encryptor.Encrypt(_rng, message, plainTextLength, cipherText);
+  _Encryptor.Encrypt(_rng, message, plainTextLength, cipherText);
   newmessage = cipherText;
   newlength = cipherTextLength;
   return true;
 }
 
 bool ECCCrypto::decrypt(const byte* message, int length, byte*& newmessage, int& newlength){
-  CryptoPP::ECIES < ECC_ALGORITHM >::Decryptor Decryptor (_privateKey);
+  //_Decryptor(_privateKey);
     size_t cipherTextLength = length;// + 1;
     // Size
-    size_t recoveredTextLength = Decryptor.MaxPlaintextLength (cipherTextLength);    
+    size_t recoveredTextLength = _Decryptor.MaxPlaintextLength (cipherTextLength);    
     if (0 == recoveredTextLength)      
     {
         //throw runtime_error ("recoveredTextLength is not valid");
@@ -294,11 +295,20 @@ bool ECCCrypto::decrypt(const byte* message, int length, byte*& newmessage, int&
     memset (recoveredText, 0xFB, recoveredTextLength);
 
     // Decryption
-    Decryptor.Decrypt (_rng, message, cipherTextLength, recoveredText);     
+    _Decryptor.Decrypt (_rng, message, cipherTextLength, recoveredText);     
 
     // cout << "Recovered text: " << recoveredText << endl;
 	// cout << "Recovered text length is " << recoveredTextLength << endl;
     newmessage = recoveredText;
     newlength = recoveredTextLength;
     return true;
+}
+
+void ECCCrypto::UpdateEncryptor(){
+  //std::cout << "load encryptor" << std::endl;
+  _Encryptor = CryptoPP::ECIES<ECC_ALGORITHM>::Encryptor(_publicKey);
+}
+void ECCCrypto::UpdateDecryptor(){
+  //std::cout << "load decryptor" << std::endl;
+  _Decryptor = CryptoPP::ECIES<ECC_ALGORITHM>::Decryptor(_privateKey);
 }
