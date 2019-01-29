@@ -7,15 +7,10 @@ bool AESCrypto::genKey(const std::string& privateKeyFile, const std::string& pub
 bool AESCrypto::loadKey(const std::string& privateKeyFile, const std::string& publicKeyFile){
   return false;
 }
-std::string AESCrypto::encryptText(const std::string& message){
-  return "";
-}
-std::string AESCrypto::decryptText(const std::string& message){
-  return "";
-}
-void AESCrypto::encryptFile(const std::string& inputFile, const std::string& outputFile){
 
+bool AESCrypto::encrypt(const byte* message, int length, byte*& newmessage, int& newlength){
+  return false;
 }
-void AESCrypto::decryptFile(const std::string& inputFile, const std::string& outputFile){
-
+bool AESCrypto::decrypt(const byte* message, int length, byte*& newmessage, int& newlength){
+  return false;
 }

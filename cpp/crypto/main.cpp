@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdio.h>
-#include "ecc.h"
+#include "cryptolib.h"
 using namespace std;
 
 int main(int argc, char ** argv) {

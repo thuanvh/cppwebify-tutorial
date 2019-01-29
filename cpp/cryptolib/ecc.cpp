@@ -14,7 +14,7 @@ using std::endl;
 using std::string;
 
 #include "osrng.h"
-using CryptoPP::byte;
+//using CryptoPP::byte;
 // using CryptoPP::AutoSeededX917RNG;
 using CryptoPP::AutoSeededRandomPool;
 
@@ -53,248 +53,250 @@ using CryptoPP::DL_GroupParameters_EC<ECP>;
 #include "oids.h"
 using CryptoPP::OID;
 
-bool GeneratePrivateKey( const OID& oid, ECDSA<ECP, SHA1>::PrivateKey& key );
-bool GeneratePublicKey( const ECDSA<ECP, SHA1>::PrivateKey& privateKey, ECDSA<ECP, SHA1>::PublicKey& publicKey );
+using CryptoPP::PrivateKey;
+using CryptoPP::PublicKey;
 
-void SavePrivateKey( const string& filename, const ECDSA<ECP, SHA1>::PrivateKey& key );
-void SavePublicKey( const string& filename, const ECDSA<ECP, SHA1>::PublicKey& key );
-void LoadPrivateKey( const string& filename, ECDSA<ECP, SHA1>::PrivateKey& key );
-void LoadPublicKey( const string& filename, ECDSA<ECP, SHA1>::PublicKey& key );
-
-void PrintDomainParameters( const ECDSA<ECP, SHA1>::PrivateKey& key );
-void PrintDomainParameters( const ECDSA<ECP, SHA1>::PublicKey& key );
-void PrintDomainParameters( const DL_GroupParameters_EC<ECP>& params );
-void PrintPrivateKey( const ECDSA<ECP, SHA1>::PrivateKey& key );
-void PrintPublicKey( const ECDSA<ECP, SHA1>::PublicKey& key );
-
-bool SignMessage( const ECDSA<ECP, SHA1>::PrivateKey& key, const string& message, string& signature );
-bool VerifyMessage( const ECDSA<ECP, SHA1>::PublicKey& key, const string& message, const string& signature );
-
-//////////////////////////////////////////
-// In 2010, use SHA-256 and P-256 curve
-//////////////////////////////////////////
-
-int main_ecc(int argc, char* argv[])
+void SavePrivateKey(const PrivateKey& key, const string& file)
 {
-    // Scratch result
-    bool result = false;   
-    
-    // Private and Public keys
-    ECDSA<ECP, SHA1>::PrivateKey privateKey;
-    ECDSA<ECP, SHA1>::PublicKey publicKey;
-    
-    /////////////////////////////////////////////
-    // Generate Keys
-    result = GeneratePrivateKey( CryptoPP::ASN1::secp160r1(), privateKey );
-    assert( true == result );
-    if( !result ) { return -1; }
-
-    result = GeneratePublicKey( privateKey, publicKey );
-    assert( true == result );
-    if( !result ) { return -2; }
-    
-    /////////////////////////////////////////////
-    // Print Domain Parameters and Keys   
-    PrintDomainParameters( publicKey );
-    PrintPrivateKey( privateKey );
-    PrintPublicKey( publicKey );
-    
-    /////////////////////////////////////////////
-    // Save key in PKCS#9 and X.509 format    
-    SavePrivateKey( "ec.private.key", privateKey );
-    SavePublicKey( "ec.public.key", publicKey );
-    
-    /////////////////////////////////////////////
-    // Load key in PKCS#9 and X.509 format     
-    LoadPrivateKey( "ec.private.key", privateKey );
-    LoadPublicKey( "ec.public.key", publicKey );
-
-    /////////////////////////////////////////////
-    // Print Domain Parameters and Keys    
-    PrintDomainParameters( publicKey );
-    PrintPrivateKey( privateKey );
-    PrintPublicKey( publicKey );
-        
-    /////////////////////////////////////////////
-    // Sign and Verify a message      
-    string message = "Yoda said, Do or do not. There is no try.";
-    string signature;
-    std::cout << "Message: " << message << std::endl;
-    result = SignMessage( privateKey, message, signature );
-    std::cout << "Message: " << signature << std::endl;
-    assert( true == result );
-
-    std::cout << "Message: " << message << std::endl;
-    result = VerifyMessage( publicKey, message, signature );
-    std::cout << "Message: " << signature << std::endl;
-    assert( true == result );
-
-    return 0;
+    FileSink sink(file.c_str());
+    key.Save(sink);
 }
 
-bool GeneratePrivateKey( const OID& oid, ECDSA<ECP, SHA1>::PrivateKey& key )
+void SavePublicKey(const PublicKey& key, const string& file)
 {
-    AutoSeededRandomPool prng;
-
-    key.Initialize( prng, oid );
-    assert( key.Validate( prng, 3 ) );
-     
-    return key.Validate( prng, 3 );
+    FileSink sink(file.c_str());
+    key.Save(sink);
 }
 
-bool GeneratePublicKey( const ECDSA<ECP, SHA1>::PrivateKey& privateKey, ECDSA<ECP, SHA1>::PublicKey& publicKey )
+void LoadPrivateKey(PrivateKey& key, const string& file)
 {
-    AutoSeededRandomPool prng;
-
-    // Sanity check
-    assert( privateKey.Validate( prng, 3 ) );
-
-    privateKey.MakePublicKey(publicKey);
-    assert( publicKey.Validate( prng, 3 ) );
-
-    return publicKey.Validate( prng, 3 );
+    FileSource source(file.c_str(), true);
+    key.Load(source);
 }
 
-void PrintDomainParameters( const ECDSA<ECP, SHA1>::PrivateKey& key )
+void LoadPublicKey(PublicKey& key, const string& file)
 {
-    PrintDomainParameters( key.GetGroupParameters() );
+    FileSource source(file.c_str(), true);
+    key.Load(source);
 }
 
-void PrintDomainParameters( const ECDSA<ECP, SHA1>::PublicKey& key )
+void PrintPrivateKey(const CryptoPP::DL_PrivateKey_EC<ECP>& key, std::ostream& out)
 {
-    PrintDomainParameters( key.GetGroupParameters() );
-}
-
-void PrintDomainParameters( const DL_GroupParameters_EC<ECP>& params )
-{
-    cout << endl;
- 
-    cout << "Modulus:" << endl;
-    cout << " " << params.GetCurve().GetField().GetModulus() << endl;
+    // Group parameters
+    const DL_GroupParameters_EC<ECP>& params = key.GetGroupParameters();
+    // Base precomputation (for public key calculation from private key)
+    const CryptoPP::DL_FixedBasePrecomputation<CryptoPP::ECPPoint>& bpc = params.GetBasePrecomputation();
+    // Public Key (just do the exponentiation)
+    const CryptoPP::ECPPoint point = bpc.Exponentiate(params.GetGroupPrecomputation(), key.GetPrivateExponent());
     
-    cout << "Coefficient A:" << endl;
-    cout << " " << params.GetCurve().GetA() << endl;
+    out << "Modulus: " << std::hex << params.GetCurve().GetField().GetModulus() << endl;
+    out << "Cofactor: " << std::hex << params.GetCofactor() << endl;
     
-    cout << "Coefficient B:" << endl;
-    cout << " " << params.GetCurve().GetB() << endl;
+    out << "Coefficients" << endl;
+    out << "  A: " << std::hex << params.GetCurve().GetA() << endl;
+    out << "  B: " << std::hex << params.GetCurve().GetB() << endl;
     
-    cout << "Base Point:" << endl;
-    cout << " X: " << params.GetSubgroupGenerator().x << endl; 
-    cout << " Y: " << params.GetSubgroupGenerator().y << endl;
+    out << "Base Point" << endl;
+    out << "  x: " << std::hex << params.GetSubgroupGenerator().x << endl;
+    out << "  y: " << std::hex << params.GetSubgroupGenerator().y << endl;
     
-    cout << "Subgroup Order:" << endl;
-    cout << " " << params.GetSubgroupOrder() << endl;
+    out << "Public Point" << endl;
+    out << "  x: " << std::hex << point.x << endl;
+    out << "  y: " << std::hex << point.y << endl;
     
-    cout << "Cofactor:" << endl;
-    cout << " " << params.GetCofactor() << endl;    
+    out << "Private Exponent (multiplicand): " << endl;
+    out << "  " << std::hex << key.GetPrivateExponent() << endl;
 }
 
-void PrintPrivateKey( const ECDSA<ECP, SHA1>::PrivateKey& key )
-{   
-    cout << endl;
-    cout << "Private Exponent:" << endl;
-    cout << " " << key.GetPrivateExponent() << endl; 
-}
-
-void PrintPublicKey( const ECDSA<ECP, SHA1>::PublicKey& key )
-{   
-    cout << endl;
-    cout << "Public Element:" << endl;
-    cout << " X: " << key.GetPublicElement().x << endl; 
-    cout << " Y: " << key.GetPublicElement().y << endl;
-}
-
-void SavePrivateKey( const string& filename, const ECDSA<ECP, SHA1>::PrivateKey& key )
+void PrintPublicKey(const CryptoPP::DL_PublicKey_EC<ECP>& key, std::ostream& out)
 {
-    key.Save( FileSink( filename.c_str(), true /*binary*/ ).Ref() );
-}
-
-void SavePublicKey( const string& filename, const ECDSA<ECP, SHA1>::PublicKey& key )
-{   
-    key.Save( FileSink( filename.c_str(), true /*binary*/ ).Ref() );
-}
-
-void LoadPrivateKey( const string& filename, ECDSA<ECP, SHA1>::PrivateKey& key )
-{   
-    key.Load( FileSource( filename.c_str(), true /*pump all*/ ).Ref() );
-}
-
-void LoadPublicKey( const string& filename, ECDSA<ECP, SHA1>::PublicKey& key )
-{
-    key.Load( FileSource( filename.c_str(), true /*pump all*/ ).Ref() );
-}
-
-bool SignMessage( const ECDSA<ECP, SHA1>::PrivateKey& key, const string& message, string& signature )
-{
-    AutoSeededRandomPool prng;
+    // Group parameters
+    const DL_GroupParameters_EC<ECP>& params = key.GetGroupParameters();
+    // Public key
+    const CryptoPP::ECPPoint& point = key.GetPublicElement();
     
-    signature.erase();    
-
-    StringSource( message, true,
-        new SignerFilter( prng,
-            ECDSA<ECP,SHA1>::Signer(key),
-            new StringSink( signature )
-        ) // SignerFilter
-    ); // StringSource
+    out << "Modulus: " << std::hex << params.GetCurve().GetField().GetModulus() << endl;
+    out << "Cofactor: " << std::hex << params.GetCofactor() << endl;
     
-    return !signature.empty();
+    out << "Coefficients" << endl;
+    out << "  A: " << std::hex << params.GetCurve().GetA() << endl;
+    out << "  B: " << std::hex << params.GetCurve().GetB() << endl;
+    
+    out << "Base Point" << endl;
+    out << "  x: " << std::hex << params.GetSubgroupGenerator().x << endl;
+    out << "  y: " << std::hex << params.GetSubgroupGenerator().y << endl;
+    
+    out << "Public Point" << endl;
+    out << "  x: " << std::hex << point.x << endl;
+    out << "  y: " << std::hex << point.y << endl;
 }
-
-bool VerifyMessage( const ECDSA<ECP, SHA1>::PublicKey& key, const string& message, const string& signature )
-{
-    bool result = false;
-
-    StringSource( signature+message, true,
-        new SignatureVerificationFilter(
-            ECDSA<ECP,SHA1>::Verifier(key),
-            new ArraySink( (byte*)&result, sizeof(result) )
-        ) // SignatureVerificationFilter
-    );
-
-    return result;
-}
-
 
 bool ECCCrypto::genKey(const std::string& privateKeyFile, const std::string& publicKeyFile){
-    // Private and Public keys
+    // CryptoPP::ECIES < ECC_ALGORITHM >::PrivateKey privateKey;    
+    //     CryptoPP::ECIES < ECC_ALGORITHM >::PublicKey publicKey;    
     
-    
-    /////////////////////////////////////////////
-    // Generate Keys
-    bool result = GeneratePrivateKey( CryptoPP::ASN1::secp160r1(), _privateKey );
-    assert( true == result );
-    if( !result ) { return false; }
 
-    result = GeneratePublicKey( _privateKey, _publicKey );
-    assert( true == result );
-    if( !result ) { return false; }
+    // Key Generation
+    _privateKey.Initialize (_rng, ECC_CURVE);    
+    _privateKey.MakePublicKey (_publicKey);
     
-    // /////////////////////////////////////////////
-    // // Print Domain Parameters and Keys   
-    // PrintDomainParameters( publicKey );
-    // PrintPrivateKey( privateKey );
-    // PrintPublicKey( publicKey );
+    // Key Validation
+    if (!_privateKey.Validate (_rng, 3))
+    {        
+      return false;//throw runtime_error ("Private key validation failed");      
+    }
     
-    /////////////////////////////////////////////
-    // Save key in PKCS#9 and X.509 format    
-    SavePrivateKey( privateKeyFile, _privateKey );
-    SavePublicKey( publicKeyFile, _publicKey );
+    if (!_publicKey.Validate (_rng, 3))
+    {        
+        return false;//throw runtime_error ("Public key validation failed");      
+    }
+    // Private and Public keys
+    _privateKey.Save( FileSink( privateKeyFile.c_str(), true /*binary*/ ).Ref() );
+    _publicKey.Save( FileSink( publicKeyFile.c_str(), true /*binary*/ ).Ref() );    
     return true;
 }
-bool ECCCrypto::loadKey(const std::string& privateKeyFile, const std::string& publicKeyFile){
-    LoadPrivateKey( privateKeyFile, _privateKey );
-    LoadPublicKey( publicKeyFile, _publicKey );
+bool ECCCrypto::loadKey(const std::string &privateKeyFile, const std::string &publicKeyFile)
+{
+    _privateKey.Load( FileSource( privateKeyFile.c_str(), true /*pump all*/ ).Ref() );
+    _publicKey.Load( FileSource( publicKeyFile.c_str(), true /*pump all*/ ).Ref() );
+  //LoadPrivateKey(privateKeyFile, _privateKey);
+  //LoadPublicKey(publicKeyFile, _publicKey);
   return true;
 }
-std::string ECCCrypto::encryptText(const std::string& message){
-  return "";
-}
-std::string ECCCrypto::decryptText(const std::string& message){
-  return "";
-}
-void ECCCrypto::encryptFile(const std::string& inputFile, const std::string& outputFile){
+// std::string ECCCrypto::encryptText(const std::string& message){  
+//   // Encryptor and Decryptor
+//   CryptoPP::ECIES < ECC_ALGORITHM >::Encryptor Encryptor (_publicKey);    
+//   // Message
+//   //string plainText = "Yoda said, Do or do not. There is no try.";
+//   int plainTextLength = message.length () + 1;
 
-}
-void ECCCrypto::decryptFile(const std::string& inputFile, const std::string& outputFile){
+//   //cout << "Plain text: " << plainText << endl;
+//   //cout << "Plain text length is " << plainTextLength << " (including the trailing NULL)" << endl;
 
+//   // Size  
+//   size_t cipherTextLength = Encryptor.CiphertextLength (plainTextLength);
+    
+//   if (0 == cipherTextLength)
+//   {        
+//     return "";//throw runtime_error ("cipherTextLength is not valid");      
+//   }
+       
+//   cout << "Cipher text length is ";
+//   cout << cipherTextLength << endl;
+
+//   // Encryption buffer
+//   byte * cipherText = new byte[cipherTextLength];
+//   if (NULL == cipherText)
+//   {        
+//     //throw runtime_error ("Cipher text allocation failure");      
+//   }
+    
+//   memset (cipherText, 0xFB, cipherTextLength);
+
+//   // Encryption
+//   Encryptor.Encrypt(_rng, reinterpret_cast < const byte * > (message.data ()), plainTextLength, cipherText); 
+
+// }
+// std::string ECCCrypto::decryptText(const std::string& message){
+//     CryptoPP::ECIES < ECC_ALGORITHM >::Decryptor Decryptor (_privateKey);
+//     size_t cipherTextLength = message.length() + 1;
+//     // Size
+//     size_t recoveredTextLength = Decryptor.MaxPlaintextLength (cipherTextLength);    
+//     if (0 == recoveredTextLength)      
+//     {
+//         //throw runtime_error ("recoveredTextLength is not valid");
+//     }
+
+//     // Decryption Buffer
+//     char * recoveredText = new char[recoveredTextLength];
+//     if (NULL == recoveredText)      
+//     {        
+//         //throw runtime_error ("recoveredText allocation failure");      
+//     }    
+
+//     memset (recoveredText, 0xFB, recoveredTextLength);
+
+//     // Decryption
+//     Decryptor.Decrypt (_rng, cipherText, cipherTextLength, reinterpret_cast < byte * >(recoveredText));     
+
+//     cout << "Recovered text: " << recoveredText << endl;
+// 	cout << "Recovered text length is " << recoveredTextLength << endl;
+
+//     // Cleanup
+//     if (NULL != cipherText)
+//     {        
+//         delete[] cipherText;
+//     }
+
+//     if (NULL != recoveredText)
+//     {        
+//         delete[] recoveredText;
+//     }
+// }
+
+bool ECCCrypto::encrypt(const byte* message, int length, byte*& newmessage, int& newlength){
+// Encryptor and Decryptor
+  CryptoPP::ECIES < ECC_ALGORITHM >::Encryptor Encryptor (_publicKey);    
+  // Message
+  //string plainText = "Yoda said, Do or do not. There is no try.";
+  int plainTextLength = length;// + 1;
+
+  //cout << "Plain text: " << plainText << endl;
+  //cout << "Plain text length is " << plainTextLength << " (including the trailing NULL)" << endl;
+
+  // Size  
+  size_t cipherTextLength = Encryptor.CiphertextLength (plainTextLength);
+    
+  if (0 == cipherTextLength)
+  {        
+    return "";//throw runtime_error ("cipherTextLength is not valid");      
+  }
+       
+  cout << "Cipher text length is ";
+  cout << cipherTextLength << endl;
+
+  // Encryption buffer
+  byte* cipherText = new byte[cipherTextLength];
+  if (NULL == cipherText)
+  {        
+    //throw runtime_error ("Cipher text allocation failure");      
+  }
+    
+  memset (cipherText, 0xFB, cipherTextLength);
+
+  // Encryption
+  //Encryptor.Encrypt(_rng, reinterpret_cast < const byte * > (message.data ()), plainTextLength, cipherText); 
+  Encryptor.Encrypt(_rng, message, plainTextLength, cipherText);
+  newmessage = cipherText;
+  newlength = cipherTextLength;
+  return true;
+}
+
+bool ECCCrypto::decrypt(const byte* message, int length, byte*& newmessage, int& newlength){
+  CryptoPP::ECIES < ECC_ALGORITHM >::Decryptor Decryptor (_privateKey);
+    size_t cipherTextLength = length;// + 1;
+    // Size
+    size_t recoveredTextLength = Decryptor.MaxPlaintextLength (cipherTextLength);    
+    if (0 == recoveredTextLength)      
+    {
+        //throw runtime_error ("recoveredTextLength is not valid");
+    }
+
+    // Decryption Buffer
+    byte * recoveredText = new byte[recoveredTextLength];
+    if (NULL == recoveredText)      
+    {        
+        //throw runtime_error ("recoveredText allocation failure");      
+    }    
+
+    memset (recoveredText, 0xFB, recoveredTextLength);
+
+    // Decryption
+    Decryptor.Decrypt (_rng, message, cipherTextLength, recoveredText);     
+
+    // cout << "Recovered text: " << recoveredText << endl;
+	// cout << "Recovered text length is " << recoveredTextLength << endl;
+    newmessage = recoveredText;
+    newlength = recoveredTextLength;
+    return true;
 }

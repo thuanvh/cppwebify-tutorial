@@ -32,19 +32,31 @@ bool CryptoLib::loadKey(const std::string& privateKeyFile, const std::string& pu
   return _crypto->loadKey(privateKeyFile, publicKeyFile);
 }
 std::string CryptoLib::encryptText(const std::string& message){
-  return _crypto->encryptText(message);
+  int length = message.length() + 1;
+  byte* newMessage;
+  int newLength;
+  _crypto->encrypt(reinterpret_cast<const byte*>(message.data()), length, newMessage, newLength);
+  std::string newText(reinterpret_cast<char*>(newMessage));
+  delete[] newMessage;
+  return newText;
 }
 std::string CryptoLib::decryptText(const std::string& message){
-  return _crypto->decryptText(message);
+  int length = message.length() + 1;
+  byte* newMessage;
+  int newLength;
+  _crypto->decrypt(reinterpret_cast<const byte*>(message.data()), length, newMessage, newLength);
+  std::string newText(reinterpret_cast<char*>(newMessage));
+  delete[] newMessage;
+  return newText;
 }
 void CryptoLib::encryptFile(const std::string& inputFile, const std::string& outputFile){
-  return _crypto->encryptFile(inputFile, outputFile);
+  //return _crypto->encryptFile(inputFile, outputFile);
 }
 void CryptoLib::decryptFile(const std::string& inputFile, const std::string& outputFile){
-  return _crypto->decryptFile(inputFile, outputFile);
+  //return _crypto->decryptFile(inputFile, outputFile);
 }
 
 CryptoLib::~CryptoLib(){
   if(_crypto != nullptr)
-    delete _crypto;
+    delete (CryptoClass*)_crypto;
 }
