@@ -157,8 +157,10 @@ bool ECCCrypto::genKey(const std::string& privateKeyFile, const std::string& pub
 }
 bool ECCCrypto::loadKey(const std::string &privateKeyFile, const std::string &publicKeyFile)
 {
-    _privateKey.Load( FileSource( privateKeyFile.c_str(), true /*pump all*/ ).Ref() );
-    _publicKey.Load( FileSource( publicKeyFile.c_str(), true /*pump all*/ ).Ref() );
+    if(privateKeyFile != "")
+      _privateKey.Load( FileSource( privateKeyFile.c_str(), true /*pump all*/ ).Ref() );
+    if(publicKeyFile != "")
+      _publicKey.Load( FileSource( publicKeyFile.c_str(), true /*pump all*/ ).Ref() );
   //LoadPrivateKey(privateKeyFile, _privateKey);
   //LoadPublicKey(publicKeyFile, _publicKey);
   return true;
