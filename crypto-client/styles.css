@@ -5,10 +5,10 @@ html, body, .container-fluid {
 .text-input {
   font-size: 16px;  
 }
-.button-cmd{
+/* .button-cmd{
   width: 100px;
   display: inline;
-}
+} */
 .hash-output {
   color: #575B5E;
   font-size: 16px;
