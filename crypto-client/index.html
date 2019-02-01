@@ -22,40 +22,63 @@
 <body>
   <div id="container" class="container-fluid">
     <div class="row">
-      <input type="button" value="Gen key" id="gen-key-button" class="form-control text-input"/>
-      <input type="button" value="Save key" id="save-key-button" class="form-control text-input"/>
-      <input type="button" value="Load key" id="load-key-button" class="form-control text-input"/>
-      <h3 class="hash-heading">key Text</h3>
-      <pre id="text-output-pri" class="hash-output"> </pre>
-      <pre id="text-output-pub" class="hash-output"> </pre>
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+        <input type="button" value="Gen key" id="gen-key-button" class="form-control button-cmd" />
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+        <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">          
+          <h5 class="hash-heading">Private Key</h5>
+          <input type="button" value="Save key" id="save-key-button" class="form-control button-cmd" />
+          <input type="button" value="Load key" id="load-key-button" class="form-control button-cmd" />
+          <pre id="text-output-pri" class="hash-output"> </pre>
+        </div>
+        <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
+          <h5 class="hash-heading">Public Key</h5>
+          <input type="button" value="Save key" id="save-pubkey-button" class="form-control button-cmd" />
+          <input type="button" value="Load key" id="load-pubkey-button" class="form-control button-cmd" />
+          <pre id="text-output-pub" class="hash-output"> </pre>
+        </div>
+      </div>
     </div>
     <!-- Input row -->
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-        <h3 class="hash-heading">Input Text</h3>
-        <textarea rows="2" id="text-input" class="form-control text-input" placeholder="Enter text and see it hashed..."></textarea>
-        <h3 class="hash-heading">Output Text</h3>
-        <pre id="text-output" class="hash-output"> </pre>
-        <h3 class="hash-heading">Input Text decrypt</h3>
-        <textarea rows="2" id="text-input" class="form-control text-input" placeholder="Enter text and see it hashed..."></textarea>
-        <h3 class="hash-heading">Output Text</h3>
-        <pre id="text-output" class="hash-output"> </pre>
+        <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
+          <h5 class="hash-heading">Input Text</h5>
+          <textarea rows="2" id="text-input" class="form-control text-input" placeholder="Enter text and see it hashed..."></textarea>
+        </div>
+        <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
+          <h5 class="hash-heading">Output Text</h5>
+          <pre id="text-output" class="hash-output"> </pre>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+        <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
+          <h5 class="hash-heading">Input Text decrypt</h5>
+          <textarea rows="2" id="text-input" class="form-control text-input" placeholder="Enter text and see it hashed..."></textarea>
+        </div>
+        <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
+          <h5 class="hash-heading">Output Text</h5>
+          <pre id="text-output" class="hash-output"> </pre>
+        </div>
       </div>
     </div>
 
     <!-- SHA-1 row -->
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <h3 class="hash-heading">File Encrypt</h3>
-        <input type="button" value="Input File" id="input-file-button" class="form-control text-input"/>        
-        <input type="button" value="Save File" id="output-file-button" class="form-control text-input"/>        
-        <h3 class="hash-heading">File Decrypt</h3>
-        <input type="button" value="Input File" id="d-input-file-button" class="form-control text-input"/>        
-        <input type="button" value="Save File" id="d-output-file-button" class="form-control text-input"/>        
+        <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
+          <h5 class="hash-heading">File Encrypt</h5>
+          <input type="button" value="Input File" id="input-file-button" class="form-control button-cmd" />
+          <input type="button" value="Save File" id="output-file-button" class="form-control button-cmd" />
+        </div>
+        <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
+          <h5 class="hash-heading">File Decrypt</h5>
+          <input type="button" value="Input File" id="d-input-file-button" class="form-control button-cmd" />
+          <input type="button" value="Save File" id="d-output-file-button" class="form-control button-cmd" />
+        </div>
       </div>
     </div>
-
-    
   </div>
 </body>
 
