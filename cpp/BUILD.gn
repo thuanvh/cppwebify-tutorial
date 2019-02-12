@@ -7,12 +7,12 @@
 #}
 executable("crypto") {
   sources = [                 
-    "cpp/crypto/main.cpp",
-    "cpp/cryptolib/aes.cpp", 
-    "cpp/cryptolib/ecc.cpp",
-    "cpp/cryptolib/cryptolib.cpp"
+    "crypto/main.cpp",
+    "cryptolib/aes.cpp", 
+    "cryptolib/ecc.cpp",
+    "cryptolib/cryptolib.cpp"
   ]
-  include_dirs = ["cpp/cryptolib", "cpp/cryptopp/src"]
-  deps = ["//cpp/cryptopp:cryptopp"]
+  include_dirs = ["cryptolib", "cryptopp/src"]
+  deps = ["//cryptopp:cryptopp"]
   #deps = [":build_cryptopp"]
 }
