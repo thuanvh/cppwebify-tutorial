@@ -31,3 +31,28 @@ app.once('ready', () => {
     window.show()
   })
 })
+
+const {ipcMain, dialog} = require('electron')
+
+ipcMain.on('save-dialog', (event) => {
+  //alert("open dialog")
+  // const options = {
+  //   title: 'Save an Image',
+  //   filters: [
+  //     { name: 'Images', extensions: ['jpg', 'png', 'gif'] }
+  //   ]
+  // }
+  dialog.showSaveDialog((filename) => {
+    console.log("begin generate key ...");
+    var execFile = require('child_process').execFile
+    var program = "../cpp/build/crypto";
+    //var under = parseInt(req.body.under);
+    var child = execFile(program, ["genkey", "ecc", filename + ".key", filename + ".pub"],
+      function (error, stdout, stderr) {
+        console.log(stdout);
+        var primes = stdout.split("\n").slice(0, -3).map(function (line) {return parseInt(line);});
+      }
+    );
+    event.sender.send('saved-file', filename)
+  })
+})

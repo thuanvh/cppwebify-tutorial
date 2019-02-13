@@ -16,7 +16,7 @@
   </script>
   <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
   <script src="./window.js" charset="utf-8"></script>
-
+  <!-- <script src="./save-dialog.js" charset="utf-8"></script> -->
 </head>
 
 <body>
@@ -24,6 +24,7 @@
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
         <input type="button" value="Gen key" id="gen-key-button" class="btn btn-primary" />
+        <span class="label" id="gen-file-saved"></span>
       </div>
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
         <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
@@ -74,6 +75,13 @@
       </div>
     </div>
   </div>
+
+  <script type="text/javascript">
+    // require('./renderer-process/native-ui/dialogs/open-file')
+    // require('./renderer-process/native-ui/dialogs/error')
+    // require('./renderer-process/native-ui/dialogs/information')
+    require('./save-dialog.js')
+  </script>
 </body>
 
 </html>
