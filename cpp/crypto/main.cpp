@@ -15,17 +15,17 @@ int main(int argc, char ** argv) {
         string file_output = argc > 5 ? argv[5] : "";
         string public_key_file = argc > 6 ? argv[6] : "";        
         CryptoLib clib(encrypt_type);
-        std::cout << "load key" << std::endl;
+        //std::cout << "load key" << std::endl;
         clib.loadKey("", public_key_file);
-        std::cout << "encrypt file" << std::endl;
+        //std::cout << "encrypt file" << std::endl;
         clib.encryptFile(file_input, file_output);
       }else if(input_type=="text"){
         string msg_input = argc > 4 ? argv[4] : "";
         string public_key_file = argc > 5 ? argv[5] : "";
         CryptoLib clib(encrypt_type);
-        std::cout << "load key" << std::endl;
+        //std::cout << "load key" << std::endl;
         clib.loadKey("", public_key_file);
-        std::cout << "encrypt key" << std::endl;
+        //std::cout << "encrypt key" << std::endl;
         std::string output = clib.encryptText(msg_input);
         std::cout << output << std::endl;
       }

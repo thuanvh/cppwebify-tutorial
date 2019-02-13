@@ -28,16 +28,14 @@
       </div>
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
         <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
-          <h5 class="hash-heading">Public Key</h5>
-          <input type="button" value="Save key" id="save-pubkey-button" class="btn btn-primary" />
-          <input type="button" value="Load key" id="load-pubkey-button" class="btn btn-primary" />
-          <pre id="text-output-pub" class="hash-output"> </pre>
+          <h5 class="hash-heading">Public Key</h5>          
+          <input type="button" value="Load key" id="load-pub-key-button" class="btn btn-primary" />
+          <span class="label" id="load-key-pub"></span>
         </div>
         <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">          
           <h5 class="hash-heading">Private Key</h5>
-          <input type="button" value="Save key" id="save-key-button" class="btn btn-primary" />
           <input type="button" value="Load key" id="load-key-button" class="btn btn-primary" />
-          <pre id="text-output-pri" class="hash-output"> </pre>
+          <span class="label" id="load-key-private"></span>
         </div>        
       </div>
     </div>
@@ -46,15 +44,17 @@
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
         <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
           <h5 class="hash-heading">Input Plain Text to encrypt</h5>
-          <textarea rows="2" id="text-input" class="form-control text-input" placeholder="Enter text and see it hashed..."></textarea>
+          <textarea rows="2" id="text-input-plain" class="form-control text-input" placeholder="Enter text and see it hashed..."></textarea>
+          <input type="button" value="Encrypt" id="encrypt-text-button" class="btn btn-primary" />
           <h5 class="hash-heading">Output Cipher Text</h5>
-          <pre id="text-output" class="hash-output"> </pre>
+          <pre id="text-output-encrypted" class="hash-output"> </pre>
         </div>
         <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
           <h5 class="hash-heading">Input Cipher Text to decrypt</h5>
-          <textarea rows="2" id="text-input" class="form-control text-input" placeholder="Enter text and see it hashed..."></textarea>
+          <textarea rows="2" id="text-input-encrypted2" class="form-control text-input" placeholder="Enter text and see it hashed..."></textarea>
+          <input type="button" value="Decrypt" id="decrypt-text-button" class="btn btn-primary" />
           <h5 class="hash-heading">Output Plain Text</h5>
-          <pre id="text-output" class="hash-output"> </pre>
+          <pre id="text-output-plain" class="hash-output"> </pre>
         </div>
       </div>      
     </div>

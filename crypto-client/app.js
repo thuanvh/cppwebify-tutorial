@@ -56,3 +56,64 @@ ipcMain.on('save-dialog', (event) => {
     event.sender.send('saved-file', filename)
   })
 })
+ipcMain.on('load-key-dialog', (event) => {
+  //alert("open dialog")
+  const options = {
+    title: 'Load private key',
+    filters: [
+      { name: 'Key', extensions: ['key'] }
+    ]
+  }
+  dialog.showOpenDialog(options, (filename) => {
+    console.log("load private key ...");
+    event.sender.send('load-key-file', filename)
+  })
+})
+ipcMain.on('load-pub-key-dialog', (event) => {
+  //alert("open dialog")
+  const options = {
+    title: 'Load public key',
+    filters: [
+      { name: 'Key', extensions: ['pub'] }
+    ]
+  }
+  dialog.showOpenDialog(options, (filename) => {
+    console.log("load private key ...");
+    event.sender.send('load-pub-key-file', filename)
+  })
+})
+/// encrypt text
+ipcMain.on('encrypt-text', (event, args) => {
+  //alert("open dialog")
+  console.log(args[0]);
+  console.log(args[1]);
+  var execFile = require('child_process').execFile
+    var program = "../cpp/build/crypto";
+    //var under = parseInt(req.body.under);
+    var child = execFile(program, ["encrypt", "ecc", "text", args[0], args[1] ],
+      function (error, stdout, stderr) {
+        console.log(stdout);
+        var primes = stdout.split("\n").slice(0, -3).map(function (line) {return parseInt(line);});
+        event.sender.send('encrypt-text-finish', stdout)
+      }
+    );
+  
+})
+/// encrypt text
+ipcMain.on('decrypt-text', (event, args) => {
+  //alert("open dialog")
+  console.log("decrypt-text");
+  console.log(args[0]);
+  console.log(args[1]);
+  var execFile = require('child_process').execFile
+    var program = "../cpp/build/crypto";
+    //var under = parseInt(req.body.under);
+    var child = execFile(program, ["decrypt", "ecc", "text", args[0], args[1] ],
+      function (error, stdout, stderr) {
+        console.log(stdout);
+        var primes = stdout.split("\n").slice(0, -3).map(function (line) {return parseInt(line);});
+        event.sender.send('decrypt-text-finish', stdout)
+      }
+    );
+  
+})

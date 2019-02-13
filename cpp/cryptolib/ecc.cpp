@@ -255,8 +255,8 @@ bool ECCCrypto::encrypt(const byte* message, int length, byte*& newmessage, int&
     return "";//throw runtime_error ("cipherTextLength is not valid");      
   }
        
-  cout << "Cipher text length is ";
-  cout << cipherTextLength << endl;
+  // cout << "Cipher text length is ";
+  // cout << cipherTextLength << endl;
 
   // Encryption buffer
   byte* cipherText = new byte[cipherTextLength];
