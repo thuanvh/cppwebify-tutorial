@@ -249,7 +249,9 @@ bool ECCCrypto::encrypt(const byte* message, int length, byte*& newmessage, int&
 {
   int plainTextLength = length;// + 1;
   size_t cipherTextLength = _Encryptor.CiphertextLength (plainTextLength);
-    
+  //std::cout << "plainTextLength:" << plainTextLength << std::endl;
+  //std::cout << "cipherTextLength:" << cipherTextLength << std::endl;
+      
   if (0 == cipherTextLength)
   {        
     return "";//throw runtime_error ("cipherTextLength is not valid");      
@@ -280,16 +282,18 @@ bool ECCCrypto::decrypt(const byte* message, int length, byte*& newmessage, int&
     size_t cipherTextLength = length;// + 1;
     // Size
     size_t recoveredTextLength = _Decryptor.MaxPlaintextLength (cipherTextLength);    
+    //std::cout << "cipherTextLength:" << cipherTextLength << std::endl;
+    //std::cout << "recoveredTextLength:" << recoveredTextLength << std::endl;
     if (0 == recoveredTextLength)      
     {
-        //throw runtime_error ("recoveredTextLength is not valid");
+      std::cout<< ("recoveredTextLength is not valid") << std::endl;
     }
 
     // Decryption Buffer
     byte * recoveredText = new byte[recoveredTextLength];
     if (NULL == recoveredText)      
     {        
-        //throw runtime_error ("recoveredText allocation failure");      
+      std::cout << ("recoveredText allocation failure") << std::endl;      
     }    
 
     memset (recoveredText, 0xFB, recoveredTextLength);
@@ -311,4 +315,11 @@ void ECCCrypto::UpdateEncryptor(){
 void ECCCrypto::UpdateDecryptor(){
   //std::cout << "load decryptor" << std::endl;
   _Decryptor = CryptoPP::ECIES<ECC_ALGORITHM>::Decryptor(_privateKey);
+}
+int ECCCrypto::getCryptBlockSize(int plainSize){
+  // if(_Encryptor. != nullptr)
+  //   return (int)_Encryptor.CiphertextLength(plainSize);
+  // else if(_Decryptor != nullptr)
+    return (int)_Decryptor.CiphertextLength(plainSize);
+  //return plainSize;
 }

@@ -127,6 +127,7 @@ void CryptoLib::encryptFile(const std::string& inputFile, const std::string& out
     //filter.Flush(false);
     byte* newMessage; int newLength;
     _crypto->encrypt((byte*)buffer.data(), buffer.size(), newMessage, newLength);
+    buffer.clear();
 
     ofs.Put(newMessage, newLength);
     processed += BLOCK_SIZE;
@@ -154,17 +155,18 @@ void CryptoLib::decryptFile(const std::string& inputFile, const std::string& out
 
   const int BLOCK_SIZE = 4096;
   long processed = 0;
-
-  //std::cout << "Begin each block" << std::endl;
+  const int crypt_size = _crypto->getCryptBlockSize(BLOCK_SIZE);
+  //std::cout << "Begin each block" << crypt_size << std::endl;
   while(!EndOfFile(ifs) && !ifs.SourceExhausted())
   {
-    ifs.Pump(BLOCK_SIZE);
+    ifs.Pump(crypt_size);
     //filter.Flush(false);
     byte* newMessage; int newLength;
     _crypto->decrypt((byte*)buffer.data(), buffer.size(), newMessage, newLength);
+    buffer.clear();
 
     ofs.Put(newMessage, newLength);
-    processed += BLOCK_SIZE;
+    processed += crypt_size;
     delete []newMessage;
     //if (processed % (1024*1024*10) == 0)
     //  std::cout << "Processed: " << meter.GetTotalBytes() << std::endl;

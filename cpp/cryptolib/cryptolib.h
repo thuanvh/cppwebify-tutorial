@@ -19,6 +19,7 @@ public:
   std::string decryptText(const std::string& message);
   void encryptFile(const std::string& inputFile, const std::string& outputFile);
   void decryptFile(const std::string& inputFile, const std::string& outputFile);
+  
 private:
   CryptoClass* _crypto;   
 };

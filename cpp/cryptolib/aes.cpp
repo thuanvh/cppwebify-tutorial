@@ -14,3 +14,6 @@ bool AESCrypto::encrypt(const byte* message, int length, byte*& newmessage, int&
 bool AESCrypto::decrypt(const byte* message, int length, byte*& newmessage, int& newlength){
   return false;
 }
+int AESCrypto::getCryptBlockSize(int plainSize){
+  return plainSize;
+}
