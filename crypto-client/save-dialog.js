@@ -53,3 +53,38 @@ ipcRenderer.on('decrypt-text-finish', (event, path) => {
   if (!path) path = 'No path'  
   document.getElementById('text-output-plain').innerHTML = `${path}`  
 })
+// encrypt file
+document.getElementById('input-file-button').addEventListener('click', (event) => {  
+  ipcRenderer.send('load-file-plain-dialog')
+})
+ipcRenderer.on('load-file-plain', (event, path) => {
+  if (!path) path = 'No path'    
+  document.getElementById('input-file-plain').innerHTML = `${path}`
+})
+document.getElementById('output-file-button').addEventListener('click', (event) => {  
+  ipcRenderer.send('encrypt-file', [document.getElementById('input-file-plain').innerHTML,
+    document.getElementById('load-key-pub').innerHTML]
+  )
+})
+ipcRenderer.on('encrypt-file-finish', (event, path) => {
+  if (!path) path = 'No path'  
+  document.getElementById('output-file-encrypted').innerHTML = `${path}`  
+})
+
+// decrypt file
+document.getElementById('d-input-file-button').addEventListener('click', (event) => {  
+  ipcRenderer.send('load-file-encrypted-dialog')
+})
+ipcRenderer.on('load-file-encrypted', (event, path) => {
+  if (!path) path = 'No path'    
+  document.getElementById('input-file-encrypted').innerHTML = `${path}`
+})
+document.getElementById('d-output-file-button').addEventListener('click', (event) => {  
+  ipcRenderer.send('decrypt-file', [document.getElementById('input-file-encrypted').innerHTML,
+    document.getElementById('load-key-private').innerHTML]
+  )
+})
+ipcRenderer.on('decrypt-file-finish', (event, path) => {
+  if (!path) path = 'No path'  
+  document.getElementById('output-file-plain').innerHTML = `${path}`  
+})

@@ -117,3 +117,78 @@ ipcMain.on('decrypt-text', (event, args) => {
     );
   
 })
+/// encrypt file
+ipcMain.on('load-file-plain-dialog', (event) => {
+  //alert("open dialog")
+  // const options = {
+  //   title: 'Load private key',
+  //   filters: [
+  //     { name: 'Key', extensions: ['key'] }
+  //   ]
+  // }
+  dialog.showOpenDialog((filename) => {
+    console.log("load file plain ...");
+    event.sender.send('load-file-plain', filename)
+  })
+})
+ipcMain.on('encrypt-file', (event, args) => {  
+  const options = {
+     title: 'Save a file',
+     filters: [
+       { name: 'EncryptedFile', extensions: ['enc'] }
+     ]
+  }
+  dialog.showSaveDialog(options, (filename) => {
+    console.log("begin encrypt file ...");
+    console.log(args[0])
+    console.log(args[1])
+    var execFile = require('child_process').execFile
+    var program = "../cpp/build/crypto";
+    //var under = parseInt(req.body.under);
+    var child = execFile(program, ["encrypt", "ecc", "file", args[0], filename, args[1]],
+      function (error, stdout, stderr) {
+        console.log(stdout);
+        var primes = stdout.split("\n").slice(0, -3).map(function (line) {return parseInt(line);});
+        event.sender.send('encrypt-file-finish', filename);
+      }
+    );    
+  })  
+})
+
+// Decrypt
+ipcMain.on('load-file-encrypted-dialog', (event) => {
+  //alert("open dialog")
+  const options = {
+    title: 'Load encrypted file',
+    filters: [
+      { name: 'EncryptedFile', extensions: ['enc'] }
+    ]
+  }
+  dialog.showOpenDialog(options, (filename) => {
+    console.log("load file encrypted ...");
+    event.sender.send('load-file-encrypted', filename)
+  })
+})
+ipcMain.on('decrypt-file', (event, args) => {  
+  const options = {
+     title: 'Save a file',
+     filters: [
+       { name: 'DecryptedFile', extensions: ['plain'] }
+     ]
+  }
+  dialog.showSaveDialog(options, (filename) => {
+    console.log("begin decrypt file ...");
+    console.log(args[0])
+    console.log(args[1])
+    var execFile = require('child_process').execFile
+    var program = "../cpp/build/crypto";
+    //var under = parseInt(req.body.under);
+    var child = execFile(program, ["decrypt", "ecc", "file", args[0], filename, args[1]],
+      function (error, stdout, stderr) {
+        console.log(stdout);
+        var primes = stdout.split("\n").slice(0, -3).map(function (line) {return parseInt(line);});
+        event.sender.send('decrypt-file-finish', filename);
+      }
+    );    
+  })  
+})
