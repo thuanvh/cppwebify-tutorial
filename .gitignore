@@ -15,3 +15,7 @@ cpp/*/build/
 build/
 node_modules/
 npm-debug.log
+*.key
+*.pub
+*.enc
+*.plain
