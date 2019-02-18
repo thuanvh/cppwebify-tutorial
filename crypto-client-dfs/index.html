@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+
+  <title>Hash</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./styles.css">
+
+  <!-- Scripts -->
+  <script>
+    delete module.exports
+  </script>
+  <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+  <script src="./window.js" charset="utf-8"></script>
+  <!-- <script src="./save-dialog.js" charset="utf-8"></script> -->
+</head>
+
+<body>
+  <div id="container" class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+        <input type="button" value="Gen key" id="gen-key-button" class="btn btn-primary" />
+        <span class="label" id="gen-file-saved"></span>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+        <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
+          <h5 class="hash-heading">Public Key</h5>          
+          <input type="button" value="Load key" id="load-pub-key-button" class="btn btn-primary" />
+          <span class="label" id="load-key-pub"></span>
+        </div>
+        <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">          
+          <h5 class="hash-heading">Private Key</h5>
+          <input type="button" value="Load key" id="load-key-button" class="btn btn-primary" />
+          <span class="label" id="load-key-private"></span>
+        </div>        
+      </div>
+    </div>
+    <!-- Input row -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+        <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
+          <h5 class="hash-heading">Input Plain Text to encrypt</h5>
+          <textarea rows="2" id="text-input-plain" class="form-control text-input" placeholder="Enter text and see it hashed..."></textarea>
+          <input type="button" value="Encrypt" id="encrypt-text-button" class="btn btn-primary" />
+          <h5 class="hash-heading">Output Cipher Text</h5>
+          <pre id="text-output-encrypted" class="hash-output"> </pre>
+        </div>
+        <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
+          <h5 class="hash-heading">Input Cipher Text to decrypt</h5>
+          <textarea rows="2" id="text-input-encrypted2" class="form-control text-input" placeholder="Enter text and see it hashed..."></textarea>
+          <input type="button" value="Decrypt" id="decrypt-text-button" class="btn btn-primary" />
+          <h5 class="hash-heading">Output Plain Text</h5>
+          <pre id="text-output-plain" class="hash-output"> </pre>
+        </div>
+      </div>      
+    </div>
+
+    <!-- SHA-1 row -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
+          <h5 class="hash-heading">File Encrypt</h5>
+          <input type="button" value="Input File" id="input-file-button" class="btn btn-primary" />
+          <span class="label" id="input-file-plain"></span>
+          <input type="button" value="Save File" id="output-file-button" class="btn btn-primary" />
+          <span class="label" id="output-file-encrypted"></span>
+        </div>
+        <div class="col-md-6 col-xs-6 col-lg-6 col-sm-6">
+          <h5 class="hash-heading">File Decrypt</h5>
+          <input type="button" value="Input File" id="d-input-file-button" class="btn btn-primary" />
+          <span class="label" id="input-file-encrypted"></span>
+          <input type="button" value="Save File" id="d-output-file-button" class="btn btn-primary" />
+          <span class="label" id="output-file-plain"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    // require('./renderer-process/native-ui/dialogs/open-file')
+    // require('./renderer-process/native-ui/dialogs/error')
+    // require('./renderer-process/native-ui/dialogs/information')
+    require('./save-dialog.js')
+  </script>
+</body>
+
+</html>
